@@ -1,11 +1,12 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-  withCredentials: true, // important for CORS + cookies
+  baseURL:
+    process.env.NODE_ENV === "production"
+      ? "https://corex-backend.up.railway.app"
+      : "http://localhost:8084",
 });
 
-// Attach token automatically
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -14,7 +15,6 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-// Handle auth errors globally
 API.interceptors.response.use(
   (res) => res,
   (err) => {
