@@ -1,15 +1,15 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL:
-    process.env.NODE_ENV === "production"
-      ? "https://corex-management.vercel.app"
-      : "http://localhost:8080",
+  baseURL: process.env.REACT_APP_API_URL,
 });
 
+// Attach token
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
-  if (token) req.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    req.headers.Authorization = `Bearer ${token}`;
+  }
   return req;
 });
 
