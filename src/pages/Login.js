@@ -18,25 +18,48 @@ export default function Login() {
   }, [navigate]);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (!username || !password) {
-      setError("Please fill in all fields.");
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await API.post("/auth/login", { username, password });
-      saveToken(res.data.token || res.data);
-      navigate("/dashboard");
-    } catch (err) {
-      setError(
-        err.response?.data?.message || "Invalid credentials. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  setError("");
+
+  if (!username || !password) {
+    setError("Please fill in all fields.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const res = await API.post(
+      "/auth/login",
+      {
+        username: username,
+        password: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("LOGIN RESPONSE:", res.data);
+
+    // ✅ FIX: always store only token
+    saveToken(res.data.token);
+
+    navigate("/dashboard");
+
+  } catch (err) {
+    console.log("ERROR:", err);
+    console.log("RESPONSE:", err.response);
+
+    setError(
+      err.response?.data?.message || "Login failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div style={S.page}>
