@@ -9,21 +9,8 @@ const API = axios.create({
 
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) req.headers.Authorization = `Bearer ${token}`;
   return req;
 });
-
-API.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (err.response?.status === 401 || err.response?.status === 403) {
-      localStorage.removeItem("token");
-      window.location.href = "/";
-    }
-    return Promise.reject(err);
-  }
-);
 
 export default API;
