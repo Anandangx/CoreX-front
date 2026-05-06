@@ -146,21 +146,48 @@ export default function Users() {
   const handleAdd = () => { setForm({ username:"", name:"", email:"" }); setEditId(null); setOpen(true); };
   const handleEdit = row => { setForm({ username:row.username, name:row.name, email:row.email }); setEditId(row.id); setOpen(true); };
 
-  const handleSubmit = async () => {
-    if (!form.username || !form.name || !form.email) { showToast("Please fill all fields","error"); return; }
-    setFormLoading(true);
-    try {
-      if (editId) { await API.put(`/user/${editId}`,form); showToast("User updated"); }
-      else { await API.post("/user",form); showToast("User created"); }
-      setOpen(false); getUsers();
-    } catch { showToast("Operation failed","error"); }
-    finally { setFormLoading(false); }
-  };
+const handleSubmit = async () => {
+  if (!form.username || !form.name || !form.email) {
+    showToast("Please fill all fields","error");
+    return;
+  }
 
-  const handleDelete = async () => {
-    try { await API.delete(`/user/${deleteTarget.id}`); showToast("User deleted"); setDeleteTarget(null); getUsers(); }
-    catch { showToast("Delete failed","error"); }
-  };
+  setFormLoading(true);
+
+  try {
+    if (editId) {
+      // ✅ FIXED
+      await API.put(`/users/${editId}`, form);
+      showToast("User updated");
+    } else {
+      // ✅ FIXED
+      await API.post("/users", form);
+      showToast("User created");
+    }
+
+    setOpen(false);
+    getUsers();
+
+  } catch {
+    showToast("Operation failed","error");
+  } finally {
+    setFormLoading(false);
+  }
+};
+
+const handleDelete = async () => {
+  try {
+    // ✅ FIXED
+    await API.delete(`/users/${deleteTarget.id}`);
+    showToast("User deleted");
+
+    setDeleteTarget(null);
+    getUsers();
+
+  } catch {
+    showToast("Delete failed","error");
+  }
+};
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paged = filtered.slice(page * PER_PAGE, (page+1) * PER_PAGE);
